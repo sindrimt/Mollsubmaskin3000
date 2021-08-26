@@ -1,5 +1,5 @@
 # Simple Python Instagram Bot
-Simple instagram bot written in python using chrome webdriver and selenium<br>
+Simple instagram bot written in python using chrome webdriver and selenium<br><br>
 <i>So far it will only navigate to the set tags and like the three first images<br>
 more changes coming soon</i>
 
