@@ -23,30 +23,33 @@ def login(browser):
 
 
 def Vist_Tag(browser, url):
-    sleep_time = 5
+    sleep_time_long = 5
+    sleep_time_short = 2
     browser.get(url)
-    time.sleep(sleep_time)
+    time.sleep(sleep_time_long)
 
     pictures = browser.find_elements_by_css_selector("div[class = '_9AhH0']")
 
     image_count = 0
 
     for picture in pictures:
-        if image_count >= 3:
+        if image_count >= 10:
             break
 
         picture.click()
-        time.sleep(sleep_time)
-
-        heart = browser.find_element_by_css_selector("[aria-label = 'Like']")
-        heart.click()
-
-        time.sleep(sleep_time)
+        time.sleep(sleep_time_short)
+        try:
+            heart = browser.find_element_by_css_selector(
+                "[aria-label = 'Like']")
+            heart.click()
+            time.sleep(sleep_time_short)
+        except:
+            print("Allerede liked, men går videre, kanskje... :P")
 
         close = browser.find_element_by_css_selector("[aria-label='Close']")
         close.click()
 
-        time.sleep(sleep_time)
+        time.sleep(sleep_time_short)
 
         image_count += 1
 
@@ -57,7 +60,7 @@ def main():
 
     tags = [
         "programming",
-        "softwaredeveloper",
+        "katana",
         "programminglife",
         "programmerslife",
         "programmerlife",
