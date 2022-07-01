@@ -1,0 +1,24 @@
+{
+    "name": "mollsubmasking3000",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/sindrimt/Simple-Instagram-Bot.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/sindrimt/Simple-Instagram-Bot/issues"
+    },
+    "homepage": "https://github.com/sindrimt/Simple-Instagram-Bot#readme",
+    "dependencies": {
+        "selenium-webdriver": "^4.3.0"
+    }
+}
