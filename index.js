@@ -22,9 +22,9 @@ const main = (searchTerm) => {
                 })
                 .then(async (res) => {
                     console.log("Before cookie");
-                    await new Promise((r) => r, 2000);
+                    await driver.sleep(2000);
                     // Waits until the accpect cookies shows
-                    // await driver.wait(until.elementLocated(By.className("fc-button fc-cta-consent fc-primary-button")), 1000);
+                    //await driver.wait(until.elementLocated(By.className("fc-button fc-cta-consent fc-primary-button")), 1000);
 
                     // Click accept cookies button
                     let acceptCookies = await driver.findElement(By.className("fc-button fc-cta-consent fc-primary-button"));
@@ -36,18 +36,62 @@ const main = (searchTerm) => {
                     await driver.sleep(2000);
 
                     // Click on chord view
-                    let chordView = driver.findElement(By.className("tuxs61x b1g4bi0i b69i0zi b136ilgh"));
-                    return chordView.click();
+                    let chordView = await driver.findElements(By.className("tuxs61x b1g4bi0i b69i0zi b136ilgh"));
+
+                    return chordView[1].click();
                 })
-                .then(() => {
+                .then(async () => {
                     console.log("Chordview clicked!");
+                    await driver.sleep(1000);
+
+                    let chordGrid = await driver.findElement(By.className("chords cvhfkdk barlength-4"));
+                    //let test = chordGrid.findElements(By.xpath("div[@class='chord']"));
+                    let chordArray = [];
+
+                    let jobs = [];
+
+                    // Finds all the chords only for the grid elements marked as chords
+                    //TODO done gets called before all the jobs has finished
+                    return chordGrid
+                        .findElements(By.xpath("//div[@class = 'chord']//span[starts-with(@class, 'chord-label')]"))
+                        .then((res) => {
+                            return Promise.all(
+                                res.map((chord) => {
+                                    chord.getAttribute("class").then((res) => {
+                                        console.log(res);
+                                        chordArray.push(res);
+                                    });
+                                })
+                            );
+                        })
+                        .then(() => console.log("done"))
+                        .catch((err) => console.log(err));
+
+                    // console.log(chordArray);
+                    //let test = await yeet.findElement(By.className("chord"));
+
+                    // console.log(yeet);
+                    // console.log(yeet.length);
+
+                    // // Filter out all griditems containing a chord
+                    // let filteredGrid = yeet?.filter(async (gridItem) => {
+                    //     let chord = await chordGrid.findElement(By.className("chord"));
+
+                    //     return chord === "chord";
+                    // });
+
+                    // console.log(filteredGrid.length);
+
+                    //console.log(yeet);
                 })
                 .catch((err) => {
                     console.log("ERRORROOROROROO!");
                     console.log(err);
+
+                    driver.quit();
                 })
         );
     });
 };
 
-main("despacito");
+main("we are");
