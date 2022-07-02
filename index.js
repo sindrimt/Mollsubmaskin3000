@@ -2,7 +2,7 @@ import { Builder, By, Key, until } from "selenium-webdriver";
 import { loopThroughSongs } from "./utils/utils.js";
 
 const main = (searchTerm) => {
-    let driver = new Builder().forBrowser("chrome").build();
+    let driver = new Builder().forBrowser("chrome", "/Applications/Google Chrome Beta.app/Contents/MacOS/Google Chrome Beta").build();
     let chosenSong;
 
     driver.get(`https://chordify.net/search/${searchTerm}`).then(async () => {
@@ -54,17 +54,21 @@ const main = (searchTerm) => {
                     //TODO done gets called before all the jobs has finished
                     return chordGrid
                         .findElements(By.xpath("//div[@class = 'chord']//span[starts-with(@class, 'chord-label')]"))
-                        .then((res) => {
-                            return Promise.all(
-                                res.map((chord) => {
-                                    chord.getAttribute("class").then((res) => {
-                                        console.log(res);
-                                        chordArray.push(res);
-                                    });
-                                })
-                            );
+                        .then((chord) => {
+                            for (let i = 0; i < chord.length; i++) {
+                                jobs.push(
+                                    chord[i].getAttribute("class").then((chordName) => {
+                                        chordArray.push(chordName);
+                                    })
+                                );
+                            }
+
+                            return Promise.all(jobs);
                         })
-                        .then(() => console.log("done"))
+                        .then(() => {
+                            console.log(chordArray);
+                            console.log("done");
+                        })
                         .catch((err) => console.log(err));
 
                     // console.log(chordArray);
