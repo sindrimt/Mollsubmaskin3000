@@ -19,6 +19,7 @@
     },
     "homepage": "https://github.com/sindrimt/Simple-Instagram-Bot#readme",
     "dependencies": {
+        "@tonaljs/tonal": "^4.6.5",
         "selenium-webdriver": "^4.3.0"
     }
 }

@@ -4,6 +4,7 @@ import { loopThroughSongs } from "./utils/utils.js";
 const main = (searchTerm) => {
     let driver = new Builder().forBrowser("chrome", "/Applications/Google Chrome Beta.app/Contents/MacOS/Google Chrome Beta").build();
     let chosenSong;
+    let key;
 
     driver.get(`https://chordify.net/search/${searchTerm}`).then(async () => {
         return (
@@ -41,11 +42,21 @@ const main = (searchTerm) => {
                     return chordView[1].click();
                 })
                 .then(async () => {
+                    // Identify the key of the song
+                    let songKey = await driver.findElement(By.xpath("//span[@class = 'tboi1b']//span[starts-with(@class, 'label-')]"));
+
+                    return songKey.getAttribute("class");
+                })
+                .then((keyName) => {
+                    // Get the actual key of the song
+                    key = keyName.split("-")[1];
+                    console.log("Key:", key);
+                })
+                .then(async () => {
                     console.log("Chordview clicked!");
                     await driver.sleep(1000);
 
                     let chordGrid = await driver.findElement(By.className("chords cvhfkdk barlength-4"));
-                    //let test = chordGrid.findElements(By.xpath("div[@class='chord']"));
                     let chordArray = [];
 
                     let jobs = [];
@@ -58,18 +69,16 @@ const main = (searchTerm) => {
                             for (let i = 0; i < chord.length; i++) {
                                 jobs.push(
                                     chord[i].getAttribute("class").then((chordName) => {
-                                        chordArray.push(chordName);
+                                        chordArray.push(chordName.split("label-")[1]);
                                     })
                                 );
                             }
-
                             return Promise.all(jobs);
                         })
                         .then(() => {
                             console.log(chordArray);
                             console.log("done");
-                        })
-                        .catch((err) => console.log(err));
+                        });
 
                     // console.log(chordArray);
                     //let test = await yeet.findElement(By.className("chord"));
@@ -98,4 +107,4 @@ const main = (searchTerm) => {
     });
 };
 
-main("we are");
+main("guren no yumia");
