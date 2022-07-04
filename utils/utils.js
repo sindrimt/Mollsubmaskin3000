@@ -1,7 +1,7 @@
-export const loopThroughSongs = async (songList) => {
+export const loopThroughSongs = async (songList, errorRetries) => {
     return new Promise(async (resolve, reject) => {
         let foundChordified = false;
-        let i = 0;
+        let i = errorRetries;
 
         while (!foundChordified) {
             await songList[i].getText().then((song) => {

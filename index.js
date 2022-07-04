@@ -1,6 +1,10 @@
 import { Builder, By, Key, until } from "selenium-webdriver";
 import { loopThroughSongs } from "./utils/utils.js";
 
+let errorRetries = 0;
+
+let searchSongName = "creep";
+
 const main = (searchTerm) => {
     let driver = new Builder().forBrowser("chrome", "/Applications/Google Chrome Beta.app/Contents/MacOS/Google Chrome Beta").build();
     let chosenSong;
@@ -12,10 +16,12 @@ const main = (searchTerm) => {
                 // Find all search results
                 .findElements(By.className("apm19lh l1kpohop"))
                 .then(async (res) => {
-                    return loopThroughSongs(res);
+                    // Loop through search results until it finds a chordified song
+                    return loopThroughSongs(res, errorRetries);
                 })
                 // Get the song and its element
                 .then((res) => {
+                    // We split on youtube to get the title of the song
                     chosenSong = res[0].split("youtube")[0];
                     let chosenSongElement = res[1];
 
@@ -23,9 +29,9 @@ const main = (searchTerm) => {
                 })
                 .then(async (res) => {
                     console.log("Before cookie");
-                    await driver.sleep(2000);
+
                     // Waits until the accpect cookies shows
-                    //await driver.wait(until.elementLocated(By.className("fc-button fc-cta-consent fc-primary-button")), 1000);
+                    await driver.wait(until.elementLocated(By.className("fc-button fc-cta-consent fc-primary-button")), 1000);
 
                     // Click accept cookies button
                     let acceptCookies = await driver.findElement(By.className("fc-button fc-cta-consent fc-primary-button"));
@@ -43,10 +49,21 @@ const main = (searchTerm) => {
                 })
                 .then(async () => {
                     // Identify the key of the song
-                    let songKey = await driver.findElement(By.xpath("//span[@class = 'tboi1b']//span[starts-with(@class, 'label-')]"));
+                    await driver.sleep(1000);
+                    let songKey = await driver
+                        .findElement(By.xpath("//span[@class = 'tboi1b']//span[starts-with(@class, 'label-')]"))
+                        // If the song does not have chords, even though it says "CHORDIFY NOW", we skip it and choose the next song on the list
+                        .catch(() => {
+                            errorRetries++;
+
+                            // Call recursive function to find the next song
+                            return main(searchSongName);
+                        });
 
                     return songKey.getAttribute("class");
                 })
+                //TODO: call recursion or something to find the next song in the search result
+
                 .then((keyName) => {
                     // Get the actual key of the song
                     key = keyName.split("-")[1];
@@ -62,7 +79,6 @@ const main = (searchTerm) => {
                     let jobs = [];
 
                     // Finds all the chords only for the grid elements marked as chords
-                    //TODO done gets called before all the jobs has finished
                     return chordGrid
                         .findElements(By.xpath("//div[@class = 'chord']//span[starts-with(@class, 'chord-label')]"))
                         .then((chord) => {
@@ -76,26 +92,9 @@ const main = (searchTerm) => {
                             return Promise.all(jobs);
                         })
                         .then(() => {
-                            console.log(chordArray);
+                            //console.log(chordArray);
                             console.log("done");
                         });
-
-                    // console.log(chordArray);
-                    //let test = await yeet.findElement(By.className("chord"));
-
-                    // console.log(yeet);
-                    // console.log(yeet.length);
-
-                    // // Filter out all griditems containing a chord
-                    // let filteredGrid = yeet?.filter(async (gridItem) => {
-                    //     let chord = await chordGrid.findElement(By.className("chord"));
-
-                    //     return chord === "chord";
-                    // });
-
-                    // console.log(filteredGrid.length);
-
-                    //console.log(yeet);
                 })
                 .catch((err) => {
                     console.log("ERRORROOROROROO!");
@@ -107,4 +106,4 @@ const main = (searchTerm) => {
     });
 };
 
-main("guren no yumia");
+main(searchSongName);
