@@ -36,7 +36,13 @@ const main = (searchTerm) => {
                     // Click accept cookies button
                     let acceptCookies = await driver.findElement(By.className("fc-button fc-cta-consent fc-primary-button"));
 
-                    return acceptCookies.click();
+                    //TODO: make the error retry into a function in utils
+                    return acceptCookies.click().catch(() => {
+                        errorRetries++;
+
+                        // Call recursive function to find the next song
+                        return main(searchSongName);
+                    });
                 })
                 .then(async () => {
                     console.log("Cookies clicked!");
@@ -52,6 +58,7 @@ const main = (searchTerm) => {
                     await driver.sleep(1000);
                     let songKey = await driver
                         .findElement(By.xpath("//span[@class = 'tboi1b']//span[starts-with(@class, 'label-')]"))
+
                         // If the song does not have chords, even though it says "CHORDIFY NOW", we skip it and choose the next song on the list
                         .catch(() => {
                             errorRetries++;
@@ -62,8 +69,6 @@ const main = (searchTerm) => {
 
                     return songKey.getAttribute("class");
                 })
-                //TODO: call recursion or something to find the next song in the search result
-
                 .then((keyName) => {
                     // Get the actual key of the song
                     key = keyName.split("-")[1];
@@ -73,7 +78,13 @@ const main = (searchTerm) => {
                     console.log("Chordview clicked!");
                     await driver.sleep(1000);
 
-                    let chordGrid = await driver.findElement(By.className("chords cvhfkdk barlength-4"));
+                    // If it cant find the chords, we try again with next song
+                    let chordGrid = await driver.findElement(By.className("chords cvhfkdk barlength-4")).catch(() => {
+                        errorRetries++;
+
+                        // Call recursive function to find the next song
+                        return main(searchSongName);
+                    });
                     let chordArray = [];
 
                     let jobs = [];
@@ -85,14 +96,14 @@ const main = (searchTerm) => {
                             for (let i = 0; i < chord.length; i++) {
                                 jobs.push(
                                     chord[i].getAttribute("class").then((chordName) => {
-                                        chordArray.push(chordName.split("label-")[1]);
+                                        chordArray.push(chordName.split("label-")[1]?.replace("_", ""));
                                     })
                                 );
                             }
                             return Promise.all(jobs);
                         })
                         .then(() => {
-                            //console.log(chordArray);
+                            console.log(chordArray);
                             console.log("done");
                         });
                 })
