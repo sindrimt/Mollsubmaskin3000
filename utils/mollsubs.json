@@ -1,0 +1,25 @@
+{
+    "C-major": [
+        "Fm",
+        "Fm6",
+        "Dm7b5",
+        "Fm7",
+        "Fmmaj7",
+        "Bb7",
+        "Bb7#11",
+        "Dmb5",
+        "Fm9",
+        "Fmadd9",
+        "Fm6/9",
+        "Fmmaj9",
+        "Bb7",
+        "Ab/F",
+        "Fm/Ab",
+        "Fm/C",
+        "Db"
+    ],
+
+    "G-major": ["Cm", "Cm6", "Am7b5", "Cm7", "Cmmaj7", "F7", "F7#11", "Amb5", "Cm9", "Cmadd9", "Cm6/9", "Cmmaj9", "Eb/C", "Cm/Eb", "Cm/G"],
+
+    "D-major": ["Gm", "Gm6", "Gm7", "Gm9", "Gmmaj7", "Gmmaj9", "Gmadd9", "Gm/D", "Gm/Bb", "C7", "C7#11", "Bb/D"]
+}
