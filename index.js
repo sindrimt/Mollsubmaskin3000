@@ -7,7 +7,7 @@ import { Chord } from "@tonaljs/tonal";
 
 let errorRetries = 0;
 
-let searchSongName = "desparado eagles";
+let searchSongName = "hard to say dan fogleberg";
 
 const main = (searchTerm) => {
     let driver = new Builder().forBrowser("chrome", "/Applications/Google Chrome Beta.app/Contents/MacOS/Google Chrome Beta").build();
@@ -118,9 +118,11 @@ const main = (searchTerm) => {
                             let uniqueArray = chordArray.filter(function (item, pos) {
                                 return chordArray.indexOf(item) == pos;
                             });
+                            //console.log(uniqueArray);
 
                             // Finds the subdominant chord of the key and make it minor
-                            let subdominant = TonalKey.majorKey("G").chords[3][0] + "min";
+                            let subdominant = TonalKey.majorKey(key[0]).chords[3][0] + "min";
+                            //console.log("Subdominant:", subdominant);
 
                             // A list of all the extended chords of the subdominant minor chord
                             let extended = Chord.extended(subdominant);
