@@ -1,9 +1,13 @@
 import { Builder, By, Key, until } from "selenium-webdriver";
 import { loopThroughSongs } from "./utils/utils.js";
 
+import { Key as TonalKey } from "@tonaljs/tonal";
+import { ChordType } from "@tonaljs/tonal";
+import { Chord } from "@tonaljs/tonal";
+
 let errorRetries = 0;
 
-let searchSongName = "creep";
+let searchSongName = "desparado eagles";
 
 const main = (searchTerm) => {
     let driver = new Builder().forBrowser("chrome", "/Applications/Google Chrome Beta.app/Contents/MacOS/Google Chrome Beta").build();
@@ -11,6 +15,7 @@ const main = (searchTerm) => {
     let key;
 
     driver.get(`https://chordify.net/search/${searchTerm}`).then(async () => {
+        await driver.sleep(1000);
         return (
             driver
                 // Find all search results
@@ -73,6 +78,10 @@ const main = (searchTerm) => {
                     // Get the actual key of the song
                     key = keyName.split("-")[1];
                     console.log("Key:", key);
+
+                    if (key.includes("min")) {
+                        throw new Error("Key is minor");
+                    }
                 })
                 .then(async () => {
                     console.log("Chordview clicked!");
@@ -103,14 +112,32 @@ const main = (searchTerm) => {
                             return Promise.all(jobs);
                         })
                         .then(() => {
-                            console.log(chordArray);
                             console.log("done");
+
+                            // Filterts out duplicates
+                            let uniqueArray = chordArray.filter(function (item, pos) {
+                                return chordArray.indexOf(item) == pos;
+                            });
+
+                            // Finds the subdominant chord of the key and make it minor
+                            let subdominant = TonalKey.majorKey("G").chords[3][0] + "min";
+
+                            // A list of all the extended chords of the subdominant minor chord
+                            let extended = Chord.extended(subdominant);
+
+                            // Push the subdominant chord to the list of extended chords so it checks it as well
+                            extended.push(subdominant);
+
+                            // Loop through the extended chords and find the ones that are in the uniqueArray
+                            for (let i = 0; i < extended.length; i++) {
+                                if (uniqueArray.includes(extended[i])) {
+                                    console.log(chosenSong + "Is MOLLSUB!!");
+                                }
+                            }
                         });
                 })
                 .catch((err) => {
-                    console.log("ERRORROOROROROO!");
                     console.log(err);
-
                     driver.quit();
                 })
         );
