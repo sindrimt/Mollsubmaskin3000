@@ -59,7 +59,7 @@ let chordArray = [
 // });
 
 // Finds the subdominant chord of the key and make it minor
-let subdominant = Key.majorKey("D").chords[3][0] + "min";
+let subdominant = Key.majorKey("A").chords[3].split("maj")[0] + "min";
 console.log(subdominant);
 
 // A list of all the extended chords of the subdominant minor chord
