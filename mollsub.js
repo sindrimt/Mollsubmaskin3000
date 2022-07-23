@@ -58,7 +58,14 @@ export const main = (searchTerm) => {
                         console.log("Cookies clicked!");
                         await driver.sleep(2000);
 
+                        //TODO click the recomended song
+                        //TODO THIS SHOULD BE CONDITIONAL
+                        let recomendedSong = await driver.findElements(By.className("apm19lh l1kpohop"));
+                        console.log(recomendedSong[1]);
+                        return recomendedSong[1].click();
+
                         // Click on chord view
+                        //TODO MAKE THIS CONDITIONAL - A CHOISE BY THE USER IF IT WANTS MOLLSUB FIND MODE OR NOT
                         let chordView = await driver.findElements(By.className("tuxs61x b1g4bi0i b69i0zi b136ilgh")).catch(() => {
                             return main(searchTerm);
                         });
@@ -186,9 +193,11 @@ export const main = (searchTerm) => {
                     .catch((err) => {
                         console.log(err);
                         //reject(err);
-                        driver.quit();
+                        // driver.quit();
                     })
             );
         });
     });
 };
+
+main("we are");
